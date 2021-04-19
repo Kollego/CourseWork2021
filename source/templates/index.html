@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+<html>
+<body>
+{% block content %}
+    <script src="https://player.twitch.tv/js/embed/v1.js"></script>
+    <div id="test"></div>
+    <script type="text/javascript">
+    var options = {
+        width: 600,
+        height: 300,
+        channel: "dosia_csgo",
+        parent: ["localhost"]
+    };
+    var player = new Twitch.Player("test", options);
+    </script>
+{% endblock content %}
+</body>
+</html>
