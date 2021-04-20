@@ -1,8 +1,33 @@
 <!doctype html>
 <html lang="en-us">
-  <head>
-  </head>
-  <body>
-    {% block content %}{% endblock %}
-  </body>
+<head>
+    {% block head %}
+        <link href="{{ url_for('static', filename='layout-style.css') }}" rel="stylesheet" type="text/css"/>
+        <script src="{{ url_for('static', filename='layout-script.js') }}"></script>
+    {% endblock head %}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+<div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="#">About</a>
+    <a href="#">Channels</a>
+    <a href="#">Explore</a>
+    <a href="#">Contact</a>
+</div>
+<div class="header">
+    <h1>Twitch Best Moments</h1>
+</div>
+<div class="wrapper">
+    <div class="icon-bar">
+        <a onclick="openNav()"><i class="fa fa-align-justify"></i></a>
+        <a id="user"><i class="fa fa-user"></i></a>
+    </div>
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+</body>
 </html>
+{#if channels /bb then <div#}
