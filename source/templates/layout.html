@@ -3,18 +3,25 @@
 <head>
     {% block head %}
         <link href="{{ url_for('static', filename='layout-style.css') }}" rel="stylesheet" type="text/css"/>
-        <script src="{{ url_for('static', filename='layout-script.js') }}"></script>
     {% endblock head %}
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="{{ url_for('static', filename='layout-script.js') }}"></script>
 </head>
 <body>
 <div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    <a href="#">About</a>
+    <hr>
+    <a href={{ url_for('home') }}>About</a>
+    <hr>
+    <a href={{ url_for('videos') }}>Videos</a>
     <a href="#">Channels</a>
+    <a href="#">Games</a>
+    <hr>
     <a href="#">Explore</a>
-    <a href="#">Contact</a>
+    <hr>
+    <a href="#">Contacts</a>
+    <hr>
 </div>
 <div class="header">
     <h1>Twitch Best Moments</h1>
