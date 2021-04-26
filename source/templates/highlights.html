@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+<html>
+<head>
+    {% block head %}
+        <link href="{{ url_for('static', filename='highlights-style.css') }}" rel="stylesheet" type="text/css"/>
+    {% endblock head %}
+</head>
+<body>
+{% block content %}
+    <div class="video">
+        <div id="video-player"></div>
+        <script src="https://player.twitch.tv/js/embed/v1.js"></script>
+        <script src="{{ url_for('static', filename='highlights-scripts.js') }}"></script>
+        <div class="profile-image"
+             style="background: #fff url({{ video.profile }}) no-repeat center;">
+        </div>
+        <div class="video-name">
+            {{ video.name }}
+        </div>
+        <div class="author">
+            {{ video.author }}
+        </div>
+        <div class="game">
+            {{ video.game }}
+        </div>
+    </div>
+    <div class="highlight-list">
+        {% for h in video.highlights %}
+            <div class="highlight" onclick="seekPlayer({{ h[0] }})">{{ h[1] }}</div>
+        {% endfor %}
+    </div>
+
+{% endblock content %}
+</body>
+</html>

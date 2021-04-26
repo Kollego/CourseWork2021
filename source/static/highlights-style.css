@@ -1,0 +1,65 @@
+@import "layout-style.css";
+
+.video {
+    width: 800px;
+    float: left;
+}
+
+.video .profile-image {
+    margin-top: 7px;
+    margin-left: 2px;
+    width: 80px;
+    height: 80px;
+    float: left;
+    border-radius: 40px;
+}
+
+.video .video-name {
+    margin-top: 8px;
+    margin-left: 90px;
+    font-size: 20px;
+    width: 710px;
+    word-wrap: break-word;
+}
+
+.video .author {
+    margin-top: 8px;
+    margin-left: 90px;
+    font-size: 17px;
+    color: #181818;
+
+}
+
+.video .game {
+    margin-top: 8px;
+    margin-left: 90px;
+    font-size: 15px;
+    color: #555555;
+    word-wrap: break-word;
+}
+
+.highlight-list {
+    display: inline-block;
+    margin-left: 10px;
+    width: 120px;
+    height: 450px;
+    overflow-y:auto;
+}
+
+.highlight-list .highlight {
+    background-color: #8834fc;
+    color: #ffffff;
+    font-size: 18px;
+    height: 35px;
+    width: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 4px;
+    cursor: pointer;
+    transition: 0.1s;
+}
+
+.highlight:active {
+    background-color: #555555;
+}

@@ -7,13 +7,24 @@
     justify-content: flex-start;
 }
 
-.video {
+.grid > a {
     width: 23%;
     min-width: 150px;
     height: 270px;
     /*border: 1px solid black;*/
-    background-color: #bbbbbb;
+    /*background-color: #bbbbbb;*/
     margin: 10px;
+    /*transition: 0.5s;*/
+
+}
+
+.video {
+    /*width: 23%;*/
+    min-width: 150px;
+    height: 270px;
+    /*border: 1px solid black;*/
+    background-color: #bbbbbb;
+    /*margin: 10px;*/
     transition: 0.5s;
 
 }
@@ -43,6 +54,7 @@
     font-size: 18px;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .video .author {
@@ -52,6 +64,7 @@
     color: #555555;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .video .game {
@@ -61,6 +74,7 @@
     color: #555555;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .video .add-image i {
@@ -88,7 +102,16 @@
     margin: 15% auto; /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+    width: 40%;
+}
+
+.modal-content .btn {
+    background-color: #62c42a;
+    color: white;
+    margin-top: 5px;
+    width: 130px;
+    padding: 10px;
+    cursor: pointer;
 }
 
 /* The Close Button */
@@ -97,6 +120,7 @@
     float: right;
     font-size: 28px;
     font-weight: bold;
+    margin-top: -10px;
 }
 
 .close:hover,

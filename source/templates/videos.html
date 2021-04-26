@@ -1,47 +1,59 @@
 {% extends "layout.html" %}
 <html>
-{% block head %}
-    <link href="{{ url_for('static', filename='videos-style.css') }}" rel="stylesheet" type="text/css"/>
-
-{% endblock head %}
+<head>
+    {% block head %}
+        <link href="{{ url_for('static', filename='videos-style.css') }}" rel="stylesheet" type="text/css"/>
+    {% endblock head %}
+</head>
 <body>
 {% block content %}
     <div class="grid">
-        <div class="video">
-            <div class="image"
-                 style="background: #fff url(https://static-cdn.jtvnw.net/previews-ttv/live_user_cohhcarnage-400x200.jpg) no-repeat center;")>
+        {% for item in videos %}
+            <a href={{ url_for('highlights') }}>
+                <div class="video">
+                    <div class="image"
+                         style="background: #fff url({{ item.image }}) no-repeat center;">
+                    </div>
+                    <div class="profile-image"
+                         style="background: #fff url({{ item.profile }}) no-repeat center;">
+                    </div>
+                    <div class="video-name">
+                        {{ item.name }}
+                    </div>
+                    <div class="author">
+                        {{ item.author }}
+                    </div>
+                    <div class="game">
+                        {{ item.game }}
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+        <a>
+            <div id='video-add-btn' class="video">
+                <div class="add-image" style="text-align: center;">
+                    <i class="fa fa-plus add-image"></i>
+                </div>
+                <div style="font-size: 18px; margin: -20px 8px">
+                    Get highlights of a new video
+                </div>
             </div>
-            <div class="profile-image"
-                 style="background: #fff url(https://static-cdn.jtvnw.net/jtv_user_pictures/5f30f674-272c-41d4-b103-f121be3e0663-profile_image-50x50.png) no-repeat center;">
-            </div>
-            <div class="video-name">
-                НазваниеНазваниеНазваниеНазваниеНазваниеНазваниеНазвание
-            </div>
-            <div class="author">
-                Автор
-            </div>
-            <div class="game">
-                csgo
-            </div>
-        </div>
-        <div id='video-add-btn' class="video">
-            <div class="add-image" style="text-align: center;">
-                <i class="fa fa-plus add-image"></i>
-            </div>
-            <div style="font-size: 18px; margin: -20px 8px">
-                Get highlights of a new video
-            </div>
-        </div>
+        </a>
     </div>
 
     <div id="video-add-modal" class="modal">
-
         <!-- Modal content -->
         <div class="modal-content">
             <span class="close">&times;</span>
-            <p>Some text in the Modal..</p>
+            <div>Enter video id</div>
+            <div style="color: #818181;font-size: 11px">
+                twitch.tv/videos/<u><b>992204840</b></u>
+            </div>
+            <input style="width: 50%; height: 20px;margin-top: 5px">
+            <div class="btn">
+                Get highlights
+            </div>
         </div>
-
     </div>
     <script src="{{ url_for('static', filename='videos-script.js') }}"></script>
 {% endblock content %}
