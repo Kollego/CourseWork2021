@@ -43,3 +43,10 @@ def highlights():
         video['highlights'][i] = (video['highlights'][i], parse_timestamp(video['highlights'][i]))
 
     return render_template('highlights.html', video=video)
+
+
+@app.route('/get-highlights', methods=['POST'])
+def get_post_javascript_data():
+    jsdata = request.get_json(force=True)
+    print(jsdata['data'])
+    return jsdata
