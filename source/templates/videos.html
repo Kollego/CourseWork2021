@@ -7,9 +7,9 @@
 </head>
 <body>
 {% block content %}
-    <div class="grid">
+    <div id="video-grid" class="grid">
         {% for item in videos %}
-            <a href={{ url_for('highlights') }}>
+{#            <a href={{ url_for('highlights') }}>#}
                 <div class="video">
                     <div class="image"
                          style="background: #fff url({{ item.image }}) no-repeat center;">
@@ -27,9 +27,9 @@
                         {{ item.game }}
                     </div>
                 </div>
-            </a>
+{#            </a>#}
         {% endfor %}
-        <a>
+{#        <a>#}
             <div id='video-add-btn' class="video">
                 <div class="add-image" style="text-align: center;">
                     <i class="fa fa-plus add-image"></i>
@@ -38,7 +38,7 @@
                     Get highlights of a new video
                 </div>
             </div>
-        </a>
+{#        </a>#}
     </div>
 
     <div id="video-add-modal" class="modal">
