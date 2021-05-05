@@ -1,9 +1,7 @@
-from traceback import format_exc
-
 from flask import jsonify, request, render_template
 
 from source import app
-from .utils import parse_timestamp
+from .utils import parse_timestamp, get_video
 
 
 @app.route('/', methods=['GET'])
@@ -32,6 +30,7 @@ def videos():
 
 @app.route('/highlights', methods=['GET'])
 def highlights():
+    # id = request.args.get()
     video = {
         'image': 'https://static-cdn.jtvnw.net/cf_vods/dgeft87wbj63p/9ecf755420932ed0daf1_funspark_csgo_41825646556_1618926743//thumb/thumb0-320x180.jpg',
         'profile': 'https://static-cdn.jtvnw.net/jtv_user_pictures/d207bd33-d461-4262-92b1-b1f327b38fe7-profile_image-70x70.png',
@@ -48,5 +47,6 @@ def highlights():
 @app.route('/get-highlights', methods=['POST'])
 def get_post_javascript_data():
     jsdata = request.get_json(force=True)
-    print(jsdata['data'])
-    return jsdata
+    data = get_video(jsdata['video-id'])
+    # do highlights
+    return data
