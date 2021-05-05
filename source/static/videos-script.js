@@ -13,18 +13,19 @@ const createVideo = function createVideo(id) {
     video.setAttribute('id', id)
     let image = document.createElement('div')
     image.classList.add('image')
+    image.setAttribute('id', 'image' + id)
     let loader = document.createElement('div')
     loader.classList.add('loader')
-    loader.setAttribute('id', 'loader'+id)
+    loader.setAttribute('id', 'loader' + id)
     let profile = document.createElement('div')
     profile.classList.add('profile-image')
     let name = document.createElement('div')
     name.classList.add('video-name')
-    name.setAttribute('id', 'name'+id)
+    name.setAttribute('id', 'name' + id)
     name.textContent = "#" + id
     let author = document.createElement('div')
     author.classList.add('author')
-    author.setAttribute('id', 'author'+id)
+    author.setAttribute('id', 'author' + id)
     // author.textContent = item.author
     let game = document.createElement('div')
     game.classList.add('game')
@@ -60,11 +61,12 @@ get.onclick = function () {
     let videoID = document.getElementById("input-id").value
     let xhr = new XMLHttpRequest();
     xhr.open("POST", '/get-highlights', true);
-    xhr.onload = function() {
+    xhr.onload = function () {
         if (xhr.status == 200)
             var response = JSON.parse(xhr.responseText);
-            document.getElementById('name'+videoID).innerText = response["title"];
-            document.getElementById('author'+videoID).innerText = response["user_name"];
+        document.getElementById('name' + videoID).innerText = response["title"];
+        document.getElementById('author' + videoID).innerText = response["user_name"];
+        document.getElementById('image' + videoID).style.background = "#fff url(" + response['thumbnail_url'] + ") no-repeat center"
     }
     // xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(JSON.stringify({

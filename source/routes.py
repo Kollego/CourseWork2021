@@ -1,7 +1,7 @@
 from flask import jsonify, request, render_template
 
 from source import app
-from .utils import parse_timestamp, get_video
+from .utils import *
 
 
 @app.route('/', methods=['GET'])
@@ -48,5 +48,6 @@ def highlights():
 def get_post_javascript_data():
     jsdata = request.get_json(force=True)
     data = get_video(jsdata['video-id'])
+    data['thumbnail_url'] = change_thumbnail_size(data['thumbnail_url'])
     # do highlights
     return data
