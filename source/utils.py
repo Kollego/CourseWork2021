@@ -21,4 +21,6 @@ def change_thumbnail_size(url):
 def get_video(id):
     params = {'id': id}
     r = requests.get('https://api.twitch.tv/helix/videos', params=params, headers=headers)
+    if r.status_code == 404:
+        return r.json()
     return r.json()['data'][0]

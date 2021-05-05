@@ -62,11 +62,16 @@ get.onclick = function () {
     let xhr = new XMLHttpRequest();
     xhr.open("POST", '/get-highlights', true);
     xhr.onload = function () {
-        if (xhr.status == 200)
+        if (xhr.status == 200) {
             var response = JSON.parse(xhr.responseText);
-        document.getElementById('name' + videoID).innerText = response["title"];
-        document.getElementById('author' + videoID).innerText = response["user_name"];
-        document.getElementById('image' + videoID).style.background = "#fff url(" + response['thumbnail_url'] + ") no-repeat center"
+            document.getElementById('name' + videoID).innerText = response["title"];
+            document.getElementById('author' + videoID).innerText = response["user_name"];
+            document.getElementById('image' + videoID).style.background = "#fff url(" + response['thumbnail_url'] + ") no-repeat center"
+        } else if (xhr.status == 400) {
+            var response = JSON.parse(xhr.responseText);
+            alert("Video "+videoID+" not found")
+            document.getElementById(videoID).remove();
+        }
     }
     // xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(JSON.stringify({
