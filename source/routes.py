@@ -3,6 +3,7 @@ from flask import jsonify, request, render_template
 from source import app, celery
 from .utils import *
 from .highlights import *
+from .models import *
 
 
 @app.route('/', methods=['GET'])
@@ -51,13 +52,11 @@ def get_post_javascript_data():
     data = get_video(jsdata['video-id'])
     if data.get('error'):
         return data, 400
-    result = get_highlights.delay(jsdata['video-id'])
-    print(result.wait())
+    get_highlights.delay(jsdata['video-id'])
     data['thumbnail_url'] = change_thumbnail_size(data['thumbnail_url'])
-    # do highlights
     return data
 
 
 @celery.task(name='__main__.get_highlights')
 def get_highlights(video_id):
-    return get_timestamps(video_id)
+    get_timestamps(video_id)

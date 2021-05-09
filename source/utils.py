@@ -18,9 +18,27 @@ def change_thumbnail_size(url):
     url = re.sub('%{height}', '180', url)
     return url
 
+
 def get_video(id):
     params = {'id': id}
     r = requests.get('https://api.twitch.tv/helix/videos', params=params, headers=headers)
     if r.status_code == 404:
         return r.json()
     return r.json()['data'][0]
+
+
+def get_celery_worker_status(app):
+    i = app.control.inspect()
+    availability = i.ping()
+    stats = i.stats()
+    registered_tasks = i.registered()
+    active_tasks = i.active()
+    scheduled_tasks = i.scheduled()
+    result = {
+        'availability': availability,
+        'stats': stats,
+        'registered_tasks': registered_tasks,
+        'active_tasks': active_tasks,
+        'scheduled_tasks': scheduled_tasks
+    }
+    return result

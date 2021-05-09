@@ -67,6 +67,7 @@ get.onclick = function () {
             document.getElementById('name' + videoID).innerText = response["title"];
             document.getElementById('author' + videoID).innerText = response["user_name"];
             document.getElementById('image' + videoID).style.background = "#fff url(" + response['thumbnail_url'] + ") no-repeat center"
+            document.getElementById('loader' + videoID).remove()
         } else if (xhr.status == 400) {
             var response = JSON.parse(xhr.responseText);
             alert("Video "+videoID+" not found")

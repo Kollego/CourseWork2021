@@ -17,3 +17,6 @@ venv
 
 # Creds
 credentials.json
+
+# SQLite
+database
