@@ -1,6 +1,6 @@
 from flask import jsonify, request, render_template
 
-from source import app, celery
+from source import app, celery, db
 from .utils import *
 from .highlights import *
 from .models import *
@@ -59,4 +59,5 @@ def get_post_javascript_data():
 
 @celery.task(name='__main__.get_highlights')
 def get_highlights(video_id):
-    get_timestamps(video_id)
+    timestamps = get_timestamps(video_id)
+    load_timestamps(video_id, timestamps)
