@@ -23,13 +23,30 @@
     <a href="#">Contacts</a>
     <hr>
 </div>
+<div id="login-modal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span onclick="closeLogin()" class="close">&times;</span>
+            <div style="font-size: 16px; margin-top: 10px">
+                Username
+            </div>
+            <input id="input-username" class="login-lables" >
+            <div style="font-size: 16px; margin-top: 10px">
+                Password
+            </div>
+            <input type="password" id="input-password" class="login-lables">
+            <div onclick="login()" class="btn-get">
+                Login
+            </div>
+        </div>
+    </div>
 <div class="header">
     <h1>Twitch Best Moments</h1>
 </div>
 <div class="wrapper">
     <div class="icon-bar">
         <a onclick="openNav()"><i class="fa fa-align-justify"></i></a>
-        <a id="user"><i class="fa fa-user"></i></a>
+        <a onclick="openLogin()" id="user"><i class="fa fa-user"></i></a>
     </div>
     <div class="content">
         {% block content %}{% endblock %}

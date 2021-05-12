@@ -2,9 +2,8 @@ import requests
 import json
 import re
 
-from source import db
+from source import db, app
 from .models import *
-
 
 with open('credentials.json', 'r') as f:
     creds = json.loads(f.read())
@@ -67,3 +66,11 @@ def load_timestamps(video_id, timestamps):
         h = Highlight(video_id=video_id, offset=int(t))
         db.session.add(h)
     db.session.commit()
+
+# auth
+
+
+FOUR_WEEKS = 2419200
+
+
+

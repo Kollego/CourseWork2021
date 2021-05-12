@@ -2,8 +2,8 @@ var modal = document.getElementById("video-add-modal");
 
 var btn = document.getElementById("video-add-btn");
 
-var span = document.getElementsByClassName("close")[0];
-var get = document.getElementsByClassName("btn-get")[0];
+var span = document.getElementById("close-add");
+var get = document.getElementById("btn-get-add");
 
 // Создание вкладки с видео
 const createVideo = function createVideo(id) {
@@ -83,8 +83,3 @@ get.onclick = function () {
     document.getElementById("input-id").value = ""
 }
 
-window.onclick = function (event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}

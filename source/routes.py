@@ -1,4 +1,5 @@
 from flask import jsonify, request, render_template
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 
 from source import app, celery, db
 from .utils import *
@@ -16,9 +17,19 @@ def home():
     return render_template('index.html')
 
 
+@app.route("/login", methods=["POST"])
+def get_token():
+    data = request.get_json(force=True)
+    user = User.get_user_with_username_and_password(data["username"], data["password"])
+    if user:
+        return jsonify(token=create_access_token(user))
+
+    return jsonify(error=True), 403
+
+
 @app.route('/videos', methods=['GET'])
 def videos():
-    videos = [
+    vids = [
         {
             'image': 'https://static-cdn.jtvnw.net/cf_vods/dgeft87wbj63p/9ecf755420932ed0daf1_funspark_csgo_41825646556_1618926743//thumb/thumb0-320x180.jpg',
             'profile': 'https://static-cdn.jtvnw.net/jtv_user_pictures/d207bd33-d461-4262-92b1-b1f327b38fe7-profile_image-70x70.png',
@@ -27,7 +38,8 @@ def videos():
             'game': 'Counter-Strike: Global Offensive'
         }
     ]
-    return render_template('videos.html', videos=videos)
+
+    return render_template('videos.html', videos=vids)
 
 
 @app.route('/highlights', methods=['GET'])
