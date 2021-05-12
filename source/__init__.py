@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
 from celery import Celery
 
 app = Flask(__name__)
@@ -14,5 +15,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 
 db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
 
 from source import routes
