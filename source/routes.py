@@ -1,15 +1,19 @@
-from flask import jsonify, request, render_template
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from flask import jsonify, request, render_template, redirect, make_response
+from flask_jwt_extended import create_access_token, get_jwt_identity,\
+    jwt_required, unset_jwt_cookies, unset_access_cookies, set_access_cookies, get_jwt
 
-from source import app, celery, db
+from source import app, celery, db, jwt
 from .utils import *
 from .highlights import *
 from .models import *
 
+from datetime import datetime, timedelta, timezone
+
 
 @app.route('/', methods=['GET'])
 def main():
-    return render_template('index.html')
+    msg = request.args.get('msg')
+    return render_template('index.html', msg=msg)
 
 
 @app.route('/home', methods=['GET'])
@@ -17,17 +21,71 @@ def home():
     return render_template('index.html')
 
 
+@app.after_request
+def refresh_expiring_jwts(response):
+    try:
+        exp_timestamp = get_jwt()["exp"]
+        now = datetime.now(timezone.utc)
+        target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
+        if target_timestamp > exp_timestamp:
+            access_token = create_access_token(identity=get_jwt_identity())
+            set_access_cookies(response, access_token)
+        return response
+    except (RuntimeError, KeyError):
+        # Case where there is not a valid JWT. Just return the original respone
+        return response
+
+
 @app.route("/login", methods=["POST"])
-def get_token():
+def login():
     data = request.get_json(force=True)
     user = User.get_user_with_username_and_password(data["username"], data["password"])
     if user:
-        return jsonify(token=create_access_token(user))
+        response = jsonify(msg='login successful')
+        access_token = create_access_token(user.username)
+        set_access_cookies(response, access_token)
+        return response
 
     return jsonify(error=True), 403
 
 
+@app.route("/logout", methods=["POST"])
+def logout():
+    response = jsonify(msg="logout successful")
+    unset_jwt_cookies(response)
+    return response
+
+
+@jwt.unauthorized_loader
+def unauthorized_callback(callback):
+    return redirect('/?msg=1', 302)
+
+
+@jwt.invalid_token_loader
+def invalid_token_callback(callback):
+    # Invalid Fresh/Non-Fresh Access token in auth header
+    resp = make_response(redirect('/'))
+    unset_jwt_cookies(resp)
+    return resp, 302
+
+
+@jwt.expired_token_loader
+def expired_token_callback(callback):
+    resp = make_response(redirect('/'))
+    unset_access_cookies(resp)
+    return resp, 302
+
+
+@app.route("/identity", methods=["POST"])
+@jwt_required()
+def identity():
+    current_user = get_jwt_identity()
+    print(current_user)
+    return jsonify(user=current_user), 200
+
+
 @app.route('/videos', methods=['GET'])
+@jwt_required()
 def videos():
     vids = [
         {

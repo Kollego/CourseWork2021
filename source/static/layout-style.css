@@ -1,7 +1,7 @@
 * {
     margin: 0;
     padding: 0;
-    font-family:  monospace, "Lucida Console", "Courier New";
+    font-family: monospace, "Lucida Console", "Courier New";
 }
 
 html,
@@ -112,7 +112,7 @@ body {
 .modal-content .btn-get {
     background-color: #62c42a;
     color: white;
-    margin-top: 5px;
+    margin-top: 10px;
     width: 130px;
     padding: 10px;
     cursor: pointer;
@@ -142,10 +142,15 @@ body {
     cursor: pointer;
 }
 
-.login-lables {
+.login-fields {
     width: 50%;
     height: 25px;
     margin-top: 5px
+}
+
+.login-labels {
+    font-size: 16px;
+    margin-top: 10px
 }
 
 #user {

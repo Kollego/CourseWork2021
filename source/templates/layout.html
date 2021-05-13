@@ -24,22 +24,31 @@
     <hr>
 </div>
 <div id="login-modal" class="modal">
-        <!-- Modal content -->
-        <div class="modal-content">
-            <span onclick="closeLogin()" class="close">&times;</span>
-            <div style="font-size: 16px; margin-top: 10px">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span onclick="closeLogin()" class="close">&times;</span>
+        <div id="login">
+            <div class="login-labels">
                 Username
             </div>
-            <input id="input-username" class="login-lables" >
-            <div style="font-size: 16px; margin-top: 10px">
+            <input id="input-username" class="login-fields">
+            <div class="login-labels">
                 Password
             </div>
-            <input type="password" id="input-password" class="login-lables">
+            <input type="password" id="input-password" class="login-fields">
             <div onclick="login()" class="btn-get">
-                Login
+                Log in
             </div>
         </div>
+        <div id="logout">
+        <div id='greetings' class="login-labels"></div>
+        <div onclick="logout()" class="btn-get">
+            Log out
+        </div>
+            </div>
     </div>
+</div>
+
 <div class="header">
     <h1>Twitch Best Moments</h1>
 </div>

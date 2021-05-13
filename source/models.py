@@ -67,7 +67,7 @@ class User(db.Model):
     @staticmethod
     def get_user_with_username_and_password(username, password):
         user = User.query.filter_by(username=username).first()
-        if user and bcrypt.check_password_hash(user.Password, password):
+        if user and bcrypt.check_password_hash(user.password, password):
             return user
         else:
             return None

@@ -4,6 +4,11 @@
 <body>
 {% block content %}
     <h1>Automated Twitch Highlights Detection v0.0.1</h1>
+    {% if msg == '1' %}
+        <script>alert('Please log in')</script>
+    {% endif %}
+
 {% endblock content %}
 </body>
+
 </html>
