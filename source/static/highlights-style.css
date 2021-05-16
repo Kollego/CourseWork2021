@@ -30,14 +30,6 @@
 
 }
 
-.video .game {
-    margin-top: 8px;
-    margin-left: 90px;
-    font-size: 15px;
-    color: #555555;
-    word-wrap: break-word;
-}
-
 .highlight-list {
     display: inline-block;
     margin-left: 10px;

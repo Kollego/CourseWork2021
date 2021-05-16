@@ -34,8 +34,27 @@ def get_video(id):
     r = requests.get('https://api.twitch.tv/helix/videos', params=params, headers=headers)
     if r.status_code == 404:
         return r.json()
-    return r.json()['data'][0]
+    data = r.json()['data'][0]
+    params = {'id': data['user_id']}
+    r = requests.get('https://api.twitch.tv/helix/users', params=params, headers=headers)
+    if r.status_code == 404:
+        return r.json()
+    author_data = r.json()['data'][0]
+    author = Author.query.filter_by(id=int(data['user_id'])).first()
+    if not author:
+        author = Author(id=author_data['id'],
+                        name=author_data['display_name'],
+                        image_url=author_data['profile_image_url'])
+        db.session.add(author)
+        db.session.commit()
+    else:
+        author.name = author_data['display_name']
+        author.image_url = author_data['profile_image_url']
+        db.session.commit()
 
+    data['profile_image'] = author_data['profile_image_url']
+
+    return data
 
 # CELERY
 
@@ -63,14 +82,6 @@ def get_celery_worker_status(app):
 def load_timestamps(video_id, timestamps):
     video_id = int(video_id)
     for t in timestamps:
-        h = Highlight(video_id=video_id, offset=int(t))
+        h = Highlight(video_id=video_id, offset=int(float(t)))
         db.session.add(h)
     db.session.commit()
-
-# auth
-
-
-FOUR_WEEKS = 2419200
-
-
-

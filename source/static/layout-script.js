@@ -15,8 +15,8 @@ function getCookie(name) {
 }
 
 function openLogin() {
-    let result = getCookie('csrf_access_token')
-    if (result == '-1') {
+    let token = getCookie('csrf_access_token')
+    if (token == '-1') {
         document.getElementById('login').style.display = 'block';
         document.getElementById('logout').style.display = 'none';
         document.getElementById('login-modal').style.display = 'block';
@@ -26,7 +26,7 @@ function openLogin() {
         document.getElementById('logout').style.display = 'block';
         let xhr = new XMLHttpRequest();
         xhr.open('POST', '/identity', false);
-        xhr.setRequestHeader('X-CSRF-TOKEN', result)
+        xhr.setRequestHeader('X-CSRF-TOKEN', token)
         try {
             xhr.send();
             if (xhr.status == 200) {
@@ -58,7 +58,7 @@ function login() {
             'password': password
         }));
         if (xhr.status == 200) {
-            let response = JSON.parse(xhr.responseText);
+            alert('Successful log in')
 
         } else if (xhr.status == 400) {
             alert('User ' + username + ' not found')
@@ -76,7 +76,7 @@ function logout() {
     try {
         xhr.send();
         if (xhr.status == 200) {
-            let response = JSON.parse(xhr.responseText);
+            alert('Successful log out')
 
         } else if (xhr.status == 400) {
             alert('User not found')

@@ -15,10 +15,18 @@ class Video(db.Model):
     name = db.Column(db.String(200), nullable=False)
     image_url = db.Column(db.String(200), nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('author.id'), nullable=False)
-    # Create table
-    game_id = db.Column(db.Integer, db.ForeignKey('game.id'), nullable=False)
     highlights = db.relationship('Highlight', backref='video', lazy=True)
     processed = db.Column(db.Boolean, nullable=False, default=False)
+
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'image': self.image_url,
+            'profile': self.author.image_url,
+            'name': self.name,
+            'author': self.author.name,
+        }
 
     def __repr__(self):
         return '<Video %r>' % self.name
@@ -32,15 +40,6 @@ class Author(db.Model):
 
     def __repr__(self):
         return '<Author %r>' % self.name
-
-
-class Game(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(200), nullable=False)
-    videos = db.relationship('Video', backref='game', lazy=True)
-
-    def __repr__(self):
-        return '<Game %r>' % self.name
 
 
 users_videos = db.Table('users_videos',
@@ -81,4 +80,3 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
         }
-

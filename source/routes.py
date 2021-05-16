@@ -63,7 +63,6 @@ def unauthorized_callback(callback):
 
 @jwt.invalid_token_loader
 def invalid_token_callback(callback):
-    # Invalid Fresh/Non-Fresh Access token in auth header
     resp = make_response(redirect('/'))
     unset_jwt_cookies(resp)
     return resp, 302
@@ -80,54 +79,74 @@ def expired_token_callback(callback):
 @jwt_required()
 def identity():
     current_user = get_jwt_identity()
-    print(current_user)
     return jsonify(user=current_user), 200
 
 
 @app.route('/videos', methods=['GET'])
 @jwt_required()
 def videos():
-    vids = [
-        {
-            'image': 'https://static-cdn.jtvnw.net/cf_vods/dgeft87wbj63p/9ecf755420932ed0daf1_funspark_csgo_41825646556_1618926743//thumb/thumb0-320x180.jpg',
-            'profile': 'https://static-cdn.jtvnw.net/jtv_user_pictures/d207bd33-d461-4262-92b1-b1f327b38fe7-profile_image-70x70.png',
-            'name': '(EN) BIG vs Extra Salt | FunSpark: Ulti EU/CIS | by @hugoootv & @justharrygg',
-            'author': 'Funspark_CSGO',
-            'game': 'Counter-Strike: Global Offensive'
-        }
-    ]
-
+    # vids = [
+    #     {
+    #         'image': 'https://static-cdn.jtvnw.net/cf_vods/dgeft87wbj63p/9ecf755420932ed0daf1_funspark_csgo_41825646556_1618926743//thumb/thumb0-320x180.jpg',
+    #         'profile': 'https://static-cdn.jtvnw.net/jtv_user_pictures/d207bd33-d461-4262-92b1-b1f327b38fe7-profile_image-70x70.png',
+    #         'name': '(EN) BIG vs Extra Salt | FunSpark: Ulti EU/CIS | by @hugoootv & @justharrygg',
+    #         'author': 'Funspark_CSGO',
+    #         'game': 'Counter-Strike: Global Offensive'
+    #     }
+    # ]
+    username = get_jwt_identity()
+    user = User.query.filter_by(username=username).first()
+    vids = [v.serialize for v in user.videos]
     return render_template('videos.html', videos=vids)
 
 
 @app.route('/highlights', methods=['GET'])
+@jwt_required()
 def highlights():
     video_id = request.args.get('id')
-    video = {
-        'image': 'https://static-cdn.jtvnw.net/cf_vods/dgeft87wbj63p/9ecf755420932ed0daf1_funspark_csgo_41825646556_1618926743//thumb/thumb0-320x180.jpg',
-        'profile': 'https://static-cdn.jtvnw.net/jtv_user_pictures/d207bd33-d461-4262-92b1-b1f327b38fe7-profile_image-70x70.png',
-        'name': '(EN) BIG vs Extra Salt | FunSpark: Ulti EU/CIS | by @hugoootv & @justharrygg',
-        'author': 'Funspark_CSGO', 'game': 'Counter-Strike: Global Offensive',
-        'highlights': [6260, 8500, 11820, 4100, 7160, 9700, 8400, 7640, 7260, 8200, 7600, 9720, 8320, 11480, 11920,
-                       6980, 8220]}
-    for i in range(len(video['highlights'])):
-        video['highlights'][i] = (video['highlights'][i], parse_timestamp(video['highlights'][i]))
+    video = Video.query.filter_by(id=int(video_id)).first()
+    video_data = video.serialize
+    video_data['highlights'] = []
+    for h in video.highlights:
+        video_data['highlights'].append((h.offset, parse_timestamp(h.offset)))
 
-    return render_template('highlights.html', video=video)
+    return render_template('highlights.html', video=video_data)
 
 
 @app.route('/get-highlights', methods=['POST'])
+@jwt_required()
 def get_post_javascript_data():
     jsdata = request.get_json(force=True)
     data = get_video(jsdata['video-id'])
     if data.get('error'):
-        return data, 400
-    get_highlights.delay(jsdata['video-id'])
+        return jsonify(msg=f'Video {jsdata["video-id"]} not found'), 400
+    username = get_jwt_identity()
+    user = User.query.filter_by(username=username).first()
+    if int(data['id']) in [v.id for v in user.videos]:
+        return jsonify(msg=f'Video {jsdata["video-id"]} already exists'), 401
     data['thumbnail_url'] = change_thumbnail_size(data['thumbnail_url'])
+
+    get_highlights.delay(data, username)
+
     return data
 
 
 @celery.task(name='__main__.get_highlights')
-def get_highlights(video_id):
-    timestamps = get_timestamps(video_id)
-    load_timestamps(video_id, timestamps)
+def get_highlights(data, username):
+    user = User.query.filter_by(username=username).first()
+    video = Video.query.filter_by(id=int(data['id'])).first()
+    if video:
+        user.videos.append(video)
+        db.session.commit()
+    else:
+        video = Video(id=int(data['id']),
+                      name=data['title'],
+                      image_url=data['thumbnail_url'],
+                      processed=False,
+                      author_id=int(data['user_id']))
+        user.videos.append(video)
+        db.session.commit()
+        timestamps = get_timestamps(data['id'])
+        load_timestamps(data['id'], timestamps)
+        video.processed = True
+        db.session.commit()
