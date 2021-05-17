@@ -55,3 +55,40 @@
 .highlight:active {
     background-color: #555555;
 }
+
+.btn-drop {
+    background-color: #FC7E4E;
+    color: white;
+    float: right;
+    width: 130px;
+    padding: 10px;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.btn-drop:hover,
+.btn-drop:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.loader {
+    border: 7px solid #8b8a8a;
+    border-top: 7px solid #000000;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 2s linear infinite;
+    float: left;
+    margin-left: 7px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

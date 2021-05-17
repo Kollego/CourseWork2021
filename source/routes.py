@@ -1,5 +1,5 @@
 from flask import jsonify, request, render_template, redirect, make_response
-from flask_jwt_extended import create_access_token, get_jwt_identity,\
+from flask_jwt_extended import create_access_token, get_jwt_identity, \
     jwt_required, unset_jwt_cookies, unset_access_cookies, set_access_cookies, get_jwt
 
 from source import app, celery, db, jwt
@@ -85,25 +85,44 @@ def identity():
 @app.route('/videos', methods=['GET'])
 @jwt_required()
 def videos():
-    # vids = [
-    #     {
-    #         'image': 'https://static-cdn.jtvnw.net/cf_vods/dgeft87wbj63p/9ecf755420932ed0daf1_funspark_csgo_41825646556_1618926743//thumb/thumb0-320x180.jpg',
-    #         'profile': 'https://static-cdn.jtvnw.net/jtv_user_pictures/d207bd33-d461-4262-92b1-b1f327b38fe7-profile_image-70x70.png',
-    #         'name': '(EN) BIG vs Extra Salt | FunSpark: Ulti EU/CIS | by @hugoootv & @justharrygg',
-    #         'author': 'Funspark_CSGO',
-    #         'game': 'Counter-Strike: Global Offensive'
-    #     }
-    # ]
+    channel_id = request.args.get('channel')
+    if channel_id:
+        channel = Author.query.filter_by(id=channel_id).first()
+        channel_name = channel.name
+    else:
+        channel = None
+        channel_name = None
     username = get_jwt_identity()
     user = User.query.filter_by(username=username).first()
-    vids = [v.serialize for v in user.videos]
-    return render_template('videos.html', videos=vids)
+    if channel:
+        vids = []
+        for v in user.videos:
+            if int(channel_id) == v.author_id:
+                vids.append(v.serialize)
+    else:
+        vids = [v.serialize for v in user.videos]
+    return render_template('videos.html', videos=vids, channel_name=channel_name)
+
+
+@app.route('/channels', methods=['GET'])
+@jwt_required()
+def channels():
+    username = get_jwt_identity()
+    user = User.query.filter_by(username=username).first()
+    channels_list = [v.author.serialize for v in user.videos]
+    channels_list = list({v['id']: v for v in channels_list}.values())
+    return render_template('channels.html', channels=channels_list)
 
 
 @app.route('/highlights', methods=['GET'])
 @jwt_required()
 def highlights():
     video_id = request.args.get('id')
+    username = get_jwt_identity()
+    user = User.query.filter_by(username=username).first()
+    if int(video_id) not in [v.id for v in user.videos]:
+        resp = make_response(redirect('/videos'))
+        return resp, 302
     video = Video.query.filter_by(id=int(video_id)).first()
     video_data = video.serialize
     video_data['highlights'] = []
@@ -115,7 +134,7 @@ def highlights():
 
 @app.route('/get-highlights', methods=['POST'])
 @jwt_required()
-def get_post_javascript_data():
+def post_highlights():
     jsdata = request.get_json(force=True)
     data = get_video(jsdata['video-id'])
     if data.get('error'):
@@ -129,6 +148,18 @@ def get_post_javascript_data():
     get_highlights.delay(data, username)
 
     return data
+
+
+@app.route('/drop-video', methods=['POST'])
+@jwt_required()
+def post_drop():
+    jsdata = request.get_json(force=True)
+    username = get_jwt_identity()
+    result = drop_video(jsdata['video-id'], username)
+    if not result:
+        return jsonify(msg=f'Video {jsdata["video-id"]} not found'), 400
+
+    return jsonify(msg='ok')
 
 
 @celery.task(name='__main__.get_highlights')

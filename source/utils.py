@@ -85,3 +85,13 @@ def load_timestamps(video_id, timestamps):
         h = Highlight(video_id=video_id, offset=int(float(t)))
         db.session.add(h)
     db.session.commit()
+
+
+def drop_video(video_id, username):
+    user = User.query.filter_by(username=username).first()
+    video = Video.query.filter_by(id=video_id).first()
+    if video in user.videos:
+        user.videos.remove(video)
+        db.session.commit()
+    return True
+

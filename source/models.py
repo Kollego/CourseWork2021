@@ -38,6 +38,14 @@ class Author(db.Model):
     image_url = db.Column(db.String(200), nullable=False)
     videos = db.relationship('Video', backref='author', lazy=True)
 
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'image': self.image_url,
+            'name': self.name
+        }
+
     def __repr__(self):
         return '<Author %r>' % self.name
 

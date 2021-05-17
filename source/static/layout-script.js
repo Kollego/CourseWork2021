@@ -85,6 +85,7 @@ function logout() {
         alert('Request failed');
     }
     document.getElementById('login-modal').style.display = 'none';
+    window.location.href = '/'
 }
 
 window.onclick = function (event) {
@@ -95,5 +96,9 @@ window.onclick = function (event) {
     let modal_login = document.getElementById('login-modal');
     if (event.target == modal_login) {
         modal_login.style.display = 'none';
+    }
+    let modal_drop = document.getElementById('drop-modal');
+    if (event.target == modal_drop) {
+        modal_drop.style.display = 'none';
     }
 }

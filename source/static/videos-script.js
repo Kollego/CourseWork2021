@@ -56,7 +56,7 @@ span.onclick = function () {
 }
 
 get.onclick = function () {
-    let videoID = document.getElementById('input-id').value
+    let videoID = document.getElementById('input-id').value.trim()
     let xhr = new XMLHttpRequest();
     let token = getCookie('csrf_access_token')
     xhr.open('POST', '/get-highlights', true);
@@ -66,9 +66,10 @@ get.onclick = function () {
             var response = JSON.parse(xhr.responseText);
             document.getElementById('name' + videoID).innerText = response['title'];
             document.getElementById('author' + videoID).innerText = response['user_name'];
-            document.getElementById('image' + videoID).style.background = '#fff url(' + response['thumbnail_url'] + ') no-repeat center'
-            document.getElementById('loader' + videoID).remove()
-            document.getElementById('profile' + videoID).style.background = '#fff url(' + response['profile_image'] + ') no-repeat center'
+            document.getElementById('image' + videoID).style.background = '#fff url(' + response['thumbnail_url'] + ') no-repeat center';
+            document.getElementById('loader' + videoID).remove();
+            document.getElementById('profile' + videoID).style.background = '#fff url(' + response['profile_image'] + ') no-repeat center';
+            document.getElementById('profile' + videoID).style.backgroundSize = 'cover';
         } else if (xhr.status == 400) {
             let response = JSON.parse(xhr.responseText);
             alert(response['msg'])

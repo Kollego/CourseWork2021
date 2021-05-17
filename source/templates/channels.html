@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+<html>
+<head>
+    {% block head %}
+        <link href="{{ url_for('static', filename='channels-style.css') }}" rel="stylesheet" type="text/css"/>
+    {% endblock head %}
+</head>
+<body>
+{% block content %}
+    {% if channels|length > 0 %}
+        <div class="grid">
+        {% for item in channels %}
+            <div id="{{ item.id }}" onclick="videos('{{ item.id }}')" class="channel" title="{{ item.name }}">
+                <div class="image"
+                     style="background: #fff url({{ item.image }}) no-repeat center; background-size: cover">
+                </div>
+                <div class="name">
+                    {{ item.name }}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h2>it`s empty here :(</h2>
+    {% endif %}
+</div>
+
+    <script src="{{ url_for('static', filename='channels-script.js') }}"></script>
+{% endblock content %}
+</body>
+</html>

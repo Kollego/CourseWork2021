@@ -12,7 +12,7 @@
         <script src="https://player.twitch.tv/js/embed/v1.js"></script>
         <script src="{{ url_for('static', filename='highlights-scripts.js') }}"></script>
         <div class="profile-image"
-             style="background: #fff url({{ video.profile }}) no-repeat center;">
+             style="background: #fff url({{ video.profile }}) no-repeat center; background-size: cover;">
         </div>
         <div class="video-name">
             {{ video.name }}
@@ -20,11 +20,33 @@
         <div class="author">
             {{ video.author }}
         </div>
+        <div class="btn-drop" onclick="openDrop()">
+            Drop video
+        </div>
     </div>
+
     <div class="highlight-list">
         {% for h in video.highlights %}
             <div class="highlight" onclick="seekPlayer({{ h[0] }})">{{ h[1] }}</div>
         {% endfor %}
+    </div>
+    <div id="drop-modal" class="modal">
+        <!-- Modal content -->
+        <div id='drop-content' class="modal-content" style="height: 60px;">
+            <span onclick="closeDrop()" class="close">&times;</span>
+
+            <div id='sure' class="login-labels" , style="margin-bottom: 5px">
+                Are you sure?
+            </div>
+            <div id="yes-drop" onclick="dropVideo()" class="btn-drop" style="float: left;">
+                Yes
+            </div>
+            <div onclick="closeDrop()" class="btn-drop" style="float: left;
+                background-color: #818181; margin-left: 10px; ">
+                No
+            </div>
+
+        </div>
     </div>
 
 {% endblock content %}

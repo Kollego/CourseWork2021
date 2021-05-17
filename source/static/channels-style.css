@@ -1,0 +1,42 @@
+@import "layout-style.css";
+
+.grid {
+    display: flex;
+    flex-flow: row wrap;
+    align-content: space-between;
+    justify-content: flex-start;
+}
+
+.channel {
+    width: 15%;
+    min-width: 100px;
+    height: 240px;
+    /*border: 1px solid black;*/
+    background-color: #bbbbbb;
+    margin: 10px;
+    transition: 0.5s;
+
+}
+
+.channel:hover {
+    transform: translatey(10px);
+    background-color: #8834fc;
+}
+
+.channel .image {
+    width: 100%;
+    height: 180px;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+}
+
+.channel .name {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 18px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
