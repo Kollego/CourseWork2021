@@ -63,11 +63,11 @@ get.onclick = function () {
     xhr.setRequestHeader('X-CSRF-TOKEN', token)
     xhr.onload = function () {
         if (xhr.status == 200) {
-            var response = JSON.parse(xhr.responseText);
+            let response = JSON.parse(xhr.responseText);
             document.getElementById('name' + videoID).innerText = response['title'];
             document.getElementById('author' + videoID).innerText = response['user_name'];
             document.getElementById('image' + videoID).style.background = '#fff url(' + response['thumbnail_url'] + ') no-repeat center';
-            document.getElementById('loader' + videoID).remove();
+            //document.getElementById('loader' + videoID).remove();
             document.getElementById('profile' + videoID).style.background = '#fff url(' + response['profile_image'] + ') no-repeat center';
             document.getElementById('profile' + videoID).style.backgroundSize = 'cover';
         } else if (xhr.status == 400) {

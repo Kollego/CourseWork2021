@@ -27,8 +27,15 @@
 
     <div class="highlight-list">
         {% for h in video.highlights %}
-            <div class="highlight" onclick="seekPlayer({{ h[0] }})">{{ h[1] }}</div>
+            <div class="highlight" onclick="seekPlayer({{ h[0] }})">
+                {{ h[1] }}
+                <div class="score"></div>
+            </div>
         {% endfor %}
+
+    </div>
+    <div class="highlights-panel">
+        <div style="font-size: 20px"> Highlights panel </div>
     </div>
     <div id="drop-modal" class="modal">
         <!-- Modal content -->

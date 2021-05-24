@@ -36,6 +36,12 @@
     width: 120px;
     height: 450px;
     overflow-y:auto;
+    float: left;
+}
+
+.highlights-panel {
+    display: inline-block;
+    margin-left: 30px;
 }
 
 .highlight-list .highlight {
@@ -54,6 +60,10 @@
 
 .highlight:active {
     background-color: #555555;
+}
+
+.highlight .score {
+    display: none;
 }
 
 .btn-drop {

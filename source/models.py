@@ -5,6 +5,8 @@ class Highlight(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     video_id = db.Column(db.Integer, db.ForeignKey('video.id'), nullable=False)
     offset = db.Column(db.Integer, nullable=False)
+    score = db.Column(db.Integer, nullable=False)
+    emotion = db.Column(db.String(200))
 
     def __repr__(self):
         return f'<Highlight of {self.video_id}>'

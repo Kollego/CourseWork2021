@@ -2,6 +2,8 @@ import requests
 import json
 import re
 
+import os
+
 from source import db, app
 from .models import *
 
@@ -56,6 +58,7 @@ def get_video(id):
 
     return data
 
+
 # CELERY
 
 
@@ -82,7 +85,7 @@ def get_celery_worker_status(app):
 def load_timestamps(video_id, timestamps):
     video_id = int(video_id)
     for t in timestamps:
-        h = Highlight(video_id=video_id, offset=int(float(t)))
+        h = Highlight(video_id=video_id, offset=int(float(t)), score=1)
         db.session.add(h)
     db.session.commit()
 
@@ -95,3 +98,11 @@ def drop_video(video_id, username):
         db.session.commit()
     return True
 
+
+def get_ffmpeg_video(length, path):
+    for i in range(length/3):
+        os.run(f"ffmpeg -i {path} -ss 60 - t 3 aud.wav")
+
+
+def download_video(id):
+    os.run(f'twitch-dl {id} -d videos')

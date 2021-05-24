@@ -1,4 +1,4 @@
-from flask import jsonify, request, render_template, redirect, make_response
+from flask import jsonify, request, render_template, redirect, make_response, send_file
 from flask_jwt_extended import create_access_token, get_jwt_identity, \
     jwt_required, unset_jwt_cookies, unset_access_cookies, set_access_cookies, get_jwt
 
@@ -75,10 +75,11 @@ def expired_token_callback(callback):
     return resp, 302
 
 
-@app.route("/identity", methods=["POST"])
+@app.route("/identity", methods=["GET"])
 @jwt_required()
 def identity():
     current_user = get_jwt_identity()
+    print(get_jwt())
     return jsonify(user=current_user), 200
 
 
@@ -159,6 +160,11 @@ def post_drop():
     if not result:
         return jsonify(msg=f'Video {jsdata["video-id"]} not found'), 400
 
+    return jsonify(msg='ok')
+
+
+@app.route('/download', methods=['POST'])
+def download():
     return jsonify(msg='ok')
 
 

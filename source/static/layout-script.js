@@ -25,7 +25,7 @@ function openLogin() {
         document.getElementById('login').style.display = 'none';
         document.getElementById('logout').style.display = 'block';
         let xhr = new XMLHttpRequest();
-        xhr.open('POST', '/identity', false);
+        xhr.open('GET', '/identity', false);
         xhr.setRequestHeader('X-CSRF-TOKEN', token)
         try {
             xhr.send();
