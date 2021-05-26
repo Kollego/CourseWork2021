@@ -3,6 +3,7 @@ import json
 import re
 
 import os
+import subprocess
 
 from source import db, app
 from .models import *
@@ -85,7 +86,7 @@ def get_celery_worker_status(app):
 def load_timestamps(video_id, timestamps):
     video_id = int(video_id)
     for t in timestamps:
-        h = Highlight(video_id=video_id, offset=int(float(t)), score=1)
+        h = Highlight(video_id=video_id, offset=int(float(t[0])), score=int(float(t[1])))
         db.session.add(h)
     db.session.commit()
 
@@ -99,10 +100,22 @@ def drop_video(video_id, username):
     return True
 
 
-def get_ffmpeg_video(length, path):
-    for i in range(length/3):
-        os.run(f"ffmpeg -i {path} -ss 60 - t 3 aud.wav")
+def get_ffmpeg_video(path, offset):
+    subprocess.call(["ffmpeg", "-i", str(path), "-ss", str(offset), "-t", "3", "-ar", "44100", f"aud{offset}.wav"])
 
 
 def download_video(id):
-    os.run(f'twitch-dl {id} -d videos')
+    if os.getcwd()[-4:] != 'vods':
+        if not os.path.exists('vods'):
+            os.makedirs('vods')
+        os.chdir("vods/")
+
+    command = f'twitch-dl download -q 160p {str(id)}'
+    output = subprocess.run(command, shell=True, check=True,
+                            universal_newlines=True, stdout=subprocess.PIPE).stdout
+    result = re.search(r'Downloaded.*m(.*mkv)', output)
+    return result.group(1)
+
+
+
+

@@ -21,6 +21,11 @@ def home():
     return render_template('index.html')
 
 
+@app.route('/contacts', methods=['GET'])
+def contacts():
+    return render_template('contacts.html')
+
+
 @app.after_request
 def refresh_expiring_jwts(response):
     try:
