@@ -133,7 +133,7 @@ def highlights():
     video_data = video.serialize
     video_data['highlights'] = []
     for h in video.highlights:
-        video_data['highlights'].append((h.offset, parse_timestamp(h.offset)))
+        video_data['highlights'].append((h.offset, parse_timestamp(h.offset), h.score))
 
     return render_template('highlights.html', video=video_data)
 

@@ -44,7 +44,28 @@
     margin-left: 30px;
 }
 
-.highlight-list .highlight {
+.order-btn {
+    background-color: #8834fc;
+    color: #ffffff;
+    font-size: 18px;
+    height: 35px;
+    width: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 4px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.order-btn:hover,
+.order-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.highlight {
     background-color: #8834fc;
     color: #ffffff;
     font-size: 18px;
@@ -55,16 +76,15 @@
     align-items: center;
     margin-bottom: 4px;
     cursor: pointer;
-    transition: 0.1s;
 }
 
-.highlight:active {
-    background-color: #555555;
+.highlight:hover,
+.highlight:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }
 
-.highlight .score {
-    display: none;
-}
 
 .btn-drop {
     background-color: #FC7E4E;
@@ -83,22 +103,3 @@
     cursor: pointer;
 }
 
-.loader {
-    border: 7px solid #8b8a8a;
-    border-top: 7px solid #000000;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    animation: spin 2s linear infinite;
-    float: left;
-    margin-left: 7px;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
