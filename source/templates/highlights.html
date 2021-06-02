@@ -20,24 +20,35 @@
         <div class="author">
             {{ video.author }}
         </div>
-        <div class="btn-drop" onclick="openDrop()">
-            Drop video
-        </div>
+
     </div>
 
     <div class="highlight-list">
         {% for h in video.highlights %}
             <div class="highlight" data-score="{{ h[2] }}" onclick="seekPlayer({{ h[0] }})">
                 {{ h[1] }}
+                <div class="emote"
+                     style="background: #fff url({{ h[3] }}) no-repeat center; background-size: cover;"></div>
             </div>
         {% endfor %}
 
     </div>
     <div class="highlights-panel">
-        <div style="font-size: 20px;text-decoration:underline;"> Highlights panel </div>
-        <div style="margin-top: 10px; font-size: 18px"> Order by: </div>
-        <div class="order-btn" id="score-btn" onclick="sortHighlights('score')"> Score </div>
-        <div class="order-btn" id="time-btn" onclick="sortHighlights('time')" style="background-color: #818181"> Time </div>
+        <div style="font-size: 20px;text-decoration:underline;"> Highlights panel</div>
+        <div style="margin-top: 30px; font-size: 18px"> Order by:</div>
+        <div class="order-btn" id="score-btn" onclick="sortHighlights('score')"> Score</div>
+        <div class="order-btn" id="time-btn" onclick="sortHighlights('time')" style="background-color: #818181"> Time
+        </div>
+        <div style="margin-top: 30px; font-size: 18px; margin-top: 50px;"> Downloads:</div>
+        <a class="download" href=/download/{{ video_id }}.csv target="_blank">
+            <i class="fa fa-download"></i> csv </a>
+        <a class="download" href=/download/{{ video_id }}.txt target="_blank">
+            <i class="fa fa-download"></i> txt </a>
+        <a class="download" href=/download/{{ video_id }}.json target="_blank">
+            <i class="fa fa-download"></i> json </a>
+        <div class="btn-drop" onclick="openDrop()">
+            Drop video
+        </div>
     </div>
     <div id="drop-modal" class="modal">
         <!-- Modal content -->
@@ -47,11 +58,11 @@
             <div id='sure' class="login-labels" , style="margin-bottom: 5px">
                 Are you sure?
             </div>
-            <div id="yes-drop" onclick="dropVideo()" class="btn-drop" style="float: left;">
+            <div id="yes-drop" onclick="dropVideo()" class="btn-drop" style="float: left; margin-top: 4px">
                 Yes
             </div>
             <div onclick="closeDrop()" class="btn-drop" style="float: left;
-                background-color: #818181; margin-left: 10px; ">
+                background-color: #818181; margin-left: 10px; margin-top: 4px">
                 No
             </div>
 

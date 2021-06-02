@@ -1,6 +1,7 @@
 import requests
 import json
 import re
+import csv
 
 import os
 import subprocess
@@ -28,6 +29,34 @@ def change_thumbnail_size(url):
     url = re.sub('%{height}', '180', url)
     return url
 
+
+def generate_file(filename):
+    result = re.search(r'(\w*)\.(\w*)', filename)
+    video_id = result.group(1)
+    ext = result.group(2)
+    video = Video.query.filter_by(id=int(video_id)).first()
+    highlights = []
+    for h in video.highlights:
+        highlights.append({'time': parse_timestamp(h.offset),
+                           'time_in_seconds': h.offset,
+                           'score': h.score})
+    path = os.path.join('files', filename)
+    if ext == 'csv':
+        with open(path, 'w', encoding='utf8', newline='') as fp:
+            w = csv.DictWriter(fp, highlights[0].keys())
+            w.writeheader()
+            w.writerows(highlights)
+    elif ext == 'json':
+        with open(path, 'w') as fp:
+            json.dump(highlights, fp, indent=4)
+    else:
+        with open(path, 'w') as fp:
+            content = 'time\ttime_in_seconds\tscore\n' +\
+                      '\n'.join([row for row in
+                                 ['\t'.join([str(h['time']), str(h['time_in_seconds']), str(h['score'])]) for h in highlights]])
+            fp.write(content)
+
+    return os.path.abspath(path)
 
 # TWITCH API
 
@@ -86,7 +115,7 @@ def get_celery_worker_status(app):
 def load_timestamps(video_id, timestamps):
     video_id = int(video_id)
     for t in timestamps:
-        h = Highlight(video_id=video_id, offset=int(float(t[0])), score=int(float(t[1])))
+        h = Highlight(video_id=video_id, offset=int(float(t[0])), score=int(float(t[1])), emotion=t[2])
         db.session.add(h)
     db.session.commit()
 
@@ -99,6 +128,14 @@ def drop_video(video_id, username):
         db.session.commit()
     return True
 
+
+def create_user(name, password):
+    u = User(username=name, password=password)
+    db.session.add(u)
+    db.session.commit()
+
+
+# VIDEOS
 
 def get_ffmpeg_video(path, offset):
     subprocess.call(["ffmpeg", "-i", str(path), "-ss", str(offset), "-t", "3", "-ar", "44100", f"aud{offset}.wav"])

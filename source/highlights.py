@@ -16,9 +16,9 @@ std = np.load('bin/std.npy')
 
 
 def get_timestamps(video_id, do_vid=False):
-    chat = get_twitch_chat(video_id)
+    chat, chat_emotes, emotes_images = get_twitch_chat(video_id)
     df = get_chat_dataframe(chat)
-    chat_features = get_chat_features(df)
+    chat_features = get_chat_features(df, chat_emotes, emotes_images)
     if do_vid:
         chat_results = get_chat_results(chat_features, True)
         video_name = download_video(video_id)
@@ -33,11 +33,20 @@ def get_twitch_chat(video_id):
     url = 'https://www.twitch.tv/videos/' + str(video_id)
     chat = ChatDownloader().get_chat(url)
     messages = []
+    chat_emotes = []
+    emotes_images = {}
     for item in chat:
         messages.append({'timestamp': item['time_in_seconds'],
                          'author': item['author']['name'],
                          'message': item['message']})
-    return messages
+        if item.get('emotes'):
+            for e in item['emotes']:
+                chat_emotes.append({'timestamp': item['time_in_seconds'],
+                                    'id': e['id']})
+                if e['id'] not in emotes_images.keys():
+                    emotes_images[e['id']] = e['images'][1]['url']
+
+    return messages, chat_emotes, emotes_images
 
 
 def clear_chat_dataframe(df):
@@ -51,31 +60,37 @@ def get_chat_dataframe(chat):
     return clear_chat_dataframe(df)
 
 
-def get_chat_features(df):
+def get_chat_features(df, chat_emotes, emotes_images):
     df_features = df
     df_features['message_length'] = df_features['message'].str.len()
-    df_features = df.groupby(df.index // 20).agg({'message_length': ['count', 'mean']})
+    df_features = df_features.groupby(df_features.index // 20).agg({'message_length': ['count', 'mean']})
     df_features.columns = df_features.columns.droplevel()
     scaler = MinMaxScaler()
     df_features[['score']] = scaler.fit_transform(df_features[['count']]) * 100
     df_features['score'] = df_features['score'].astype(int)
 
-    return df_features
+    df_emotes = pd.DataFrame(chat_emotes).set_index('timestamp')
+    df_emotes = df_emotes.groupby(df_emotes.index // 20).agg({'id': lambda x: x.value_counts().index[0]})
+    df_emotes = df_emotes.replace({'id': emotes_images})
+    df_emotes.columns = ['emote_image']
+
+    return df_features.join(df_emotes)
 
 
 def get_chat_results(chat_features, vid=False):
     timestamps = [i for i in list(chat_features.sort_values(by='count', ascending=False).iloc[:25].index * 20)]
     scores = [i for i in list(chat_features.sort_values(by='count', ascending=False).iloc[:25].score)]
+    emotes = [i for i in list(chat_features.sort_values(by='count', ascending=False).iloc[:25].emote_image)]
     result = []
     result_timestamps = []
     for i in range(len(timestamps)):
         if timestamps[i] not in result_timestamps and (timestamps[i] - 20) not in result_timestamps and (
                 timestamps[i] + 20) not in result_timestamps:
             result_timestamps.append(timestamps[i])
-            result.append((int(timestamps[i]), scores[i]))
+            result.append((int(timestamps[i]), scores[i], emotes[i]))
     if not vid:
         for i in range(len(result)):
-            result[i] = (str(result[i][0] - 20), str(result[i][1]))
+            result[i] = (str(result[i][0] - 20), str(result[i][1]), result[i][2])
 
     return result
 
@@ -86,7 +101,7 @@ def get_video_results(video_name, chat_results):
     mean = 1
     std = 1
     results = []
-    for timestamp, score in chat_results:
+    for timestamp, score, emote in chat_results:
         data = []
         for offset in range(timestamp - 40, timestamp, 3):
             get_ffmpeg_video(video_name, offset)
@@ -110,8 +125,8 @@ def get_video_results(video_name, chat_results):
                 emotions = i
                 break
         if emotions != -1:
-            results.append((timestamp - 45 + emotions * 3, int(score * 1.3)))
+            results.append((timestamp - 45 + emotions * 3, int(score * 1.3), emote))
         else:
-            results.append((timestamp - 20, score))
+            results.append((timestamp - 20, score, emote))
 
     return results

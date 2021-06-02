@@ -74,7 +74,7 @@ def invalid_token_callback(callback):
 
 
 @jwt.expired_token_loader
-def expired_token_callback(callback):
+def expired_token_callback(callback1, callback2):
     resp = make_response(redirect('/'))
     unset_access_cookies(resp)
     return resp, 302
@@ -133,9 +133,9 @@ def highlights():
     video_data = video.serialize
     video_data['highlights'] = []
     for h in video.highlights:
-        video_data['highlights'].append((h.offset, parse_timestamp(h.offset), h.score))
+        video_data['highlights'].append((h.offset, parse_timestamp(h.offset), h.score, h.emotion))
 
-    return render_template('highlights.html', video=video_data)
+    return render_template('highlights.html', video=video_data, video_id=video_id)
 
 
 @app.route('/get-highlights', methods=['POST'])
@@ -151,7 +151,20 @@ def post_highlights():
         return jsonify(msg=f'Video {jsdata["video-id"]} already exists'), 401
     data['thumbnail_url'] = change_thumbnail_size(data['thumbnail_url'])
 
-    get_highlights.delay(data, username)
+    user = User.query.filter_by(username=username).first()
+    video = Video.query.filter_by(id=int(data['id'])).first()
+    if video:
+        user.videos.append(video)
+        db.session.commit()
+    else:
+        video = Video(id=int(data['id']),
+                      name=data['title'],
+                      image_url=data['thumbnail_url'],
+                      processed=False,
+                      author_id=int(data['user_id']))
+        user.videos.append(video)
+        db.session.commit()
+        get_highlights.delay(data)
 
     return data
 
@@ -168,27 +181,17 @@ def post_drop():
     return jsonify(msg='ok')
 
 
-@app.route('/download', methods=['POST'])
-def download():
-    return jsonify(msg='ok')
+@app.route('/download/<path:filename>', methods=['POST', 'GET'])
+@jwt_required()
+def download(filename):
+    path = generate_file(filename)
+    return send_file(path, as_attachment=True)
 
 
 @celery.task(name='__main__.get_highlights')
-def get_highlights(data, username):
-    user = User.query.filter_by(username=username).first()
+def get_highlights(data):
+    timestamps = get_timestamps(data['id'])
+    load_timestamps(data['id'], timestamps)
     video = Video.query.filter_by(id=int(data['id'])).first()
-    if video:
-        user.videos.append(video)
-        db.session.commit()
-    else:
-        video = Video(id=int(data['id']),
-                      name=data['title'],
-                      image_url=data['thumbnail_url'],
-                      processed=False,
-                      author_id=int(data['user_id']))
-        user.videos.append(video)
-        db.session.commit()
-        timestamps = get_timestamps(data['id'])
-        load_timestamps(data['id'], timestamps)
-        video.processed = True
-        db.session.commit()
+    video.processed = True
+    db.session.commit()

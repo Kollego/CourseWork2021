@@ -3,7 +3,15 @@
 
 <body>
 {% block content %}
-    <h1>Automated Twitch Highlights Detection v0.0.1</h1>
+    <h1>Automated Twitch Highlights Detection v1.0</h1>
+    <div style="font-size: 27px; margin-top: 30px; font-weight: bold;"> Steps to get highlights of a stream:</div>
+    <ol style="margin-left: 50px">
+    <li style="font-size: 23px">Log in <i class="fa fa-user"></i></li>
+    <li style="font-size: 23px">Go to Video tab <i class="fa fa-align-justify"></i></li>
+    <li style="font-size: 23px">Press plus button <i class="fa fa-plus "></i></li>
+    <li style="font-size: 23px">Enter video id and wait some time <i class="fa fa-anchor"></i></li>
+    <li style="font-size: 23px" >Enjoy! <i class="fa fa-gamepad"></i></li>
+    </ol>
     {% if msg == '1' %}
         <script>alert('Please log in')</script>
     {% endif %}
